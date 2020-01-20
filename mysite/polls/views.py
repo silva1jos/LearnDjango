@@ -13,7 +13,8 @@ class IndexView(generic.ListView):
 
     def get_queryset(self):
         """ Return the last five published questions."""
-        return Question.objects.filter(pub_date__lte=timezone.now()).order_by('-pub_date')[:5]
+        return Question.objects.filter(pub_date__lte=timezone.now()) \
+                       .order_by('-pub_date')[:5]
 
 
 class DetailView(generic.DetailView):
@@ -37,9 +38,11 @@ def vote(request, question_id):
         # Redisplay the question voting form.
         return render(request,
                       'polls/detail.html',
-                      {'question': question, 'error_message': "You didn't select a choice.", })
+                      {'question': question,
+                       'error_message': "You didn't select a choice.", })
     # They include an else: here i think thats not needed as return in except
     selected_choice.votes += 1
     selected_choice.save()
-    # Do a HttpResponseRedirect afer successful post, stops user from posting 2x if they hit back
+    # Do a HttpResponseRedirect afer successful post, stops
+    # user from posting 2x if they hit back
     return HttpResponseRedirect(reverse('polls:results', args=(question.id, )))
